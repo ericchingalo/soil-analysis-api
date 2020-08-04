@@ -8,7 +8,7 @@ try {
     const database = typOrmConfig.database || '';
     const username = typOrmConfig.username || '';
     const password = typOrmConfig.password || '';
-    const command = `./db-setup.sh ${username} ${password} ${database}`;
+    const command = `sh db-setup.sh ${username} ${password} ${database}`;
     shelljs.exec(command);
   }
 } catch (error) {
