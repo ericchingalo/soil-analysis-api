@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('soil-analysis/api');
+  app.setGlobalPrefix('soil/api');
 
   app.use(
     session({
