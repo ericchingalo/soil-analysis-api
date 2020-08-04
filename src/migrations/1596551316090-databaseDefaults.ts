@@ -13,7 +13,7 @@ export class databaseDefaults1596551316090 implements MigrationInterface {
     );
     await queryRunner.query(`
     INSERT INTO users (username, password, email, token) VALUES ('Admin', '${await bcrypt.hash(
-      'chingalo',
+      process.env.ADMIN_PASSWORD,
       10,
     )}', 'echingalo@gmail.com', '${generateBasicAuthanticationString(
       'admin',
