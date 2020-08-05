@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import * as session from 'express-session';
+import Helmet from 'helmet';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('soil-analysis/api');
 
   app.use(
@@ -18,6 +19,8 @@ async function bootstrap() {
       },
     }),
   );
+  app.enableCors();
+  app.use(Helmet());
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
