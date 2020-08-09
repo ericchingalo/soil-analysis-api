@@ -1,4 +1,11 @@
-import { Entity, Column, BeforeInsert, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  BeforeInsert,
+  ManyToMany,
+  JoinTable,
+  BeforeUpdate,
+} from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Identifiable } from '../../../../shared/entities/identifiable.entitty';
 import { UserRole } from '../../user-role/entities/user-role.entity';
@@ -65,5 +72,10 @@ export class User extends Identifiable {
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @BeforeUpdate()
+  async updateToken() {
+    this.token = await User.getBase64(this.username, this.password);
   }
 }
