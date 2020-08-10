@@ -1,13 +1,14 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import * as _ from 'lodash';
 
 import { BaseService } from '../../../../shared/services/base.service';
 import { User } from '../entities/user.entity';
 import { UserDTO } from '../dtos/user.dto';
 import { UserRoleService } from '../../user-role/services/user-role.service';
-import { nameMapper } from '../../../../shared/helpers/id-mapper.helper';
+import { idMapper } from '../../../../shared/helpers/id-mapper.helper';
 import { generateBasicAuthanticationString } from '../helpers/basic-auth-token.helper';
 
 @Injectable()
@@ -37,8 +38,8 @@ export class UserService extends BaseService<User, UserDTO> {
       region: data.region,
       email: data.email,
       token: generateBasicAuthanticationString(data.username, data.password),
-      roles: await this.userRoleService.userRoleRepository.find({
-        where: nameMapper(data.roles),
+      roles: await this.userRoleService.userRoleRepository.findOne({
+        where: { name: data.roles },
       }),
     });
 
@@ -55,5 +56,16 @@ export class UserService extends BaseService<User, UserDTO> {
 
   async findAll(): Promise<any> {
     return this.userRepository.find({ relations: ['roles'] });
+  }
+
+  async update(id: string, data: QueryDeepPartialEntity<User>) {
+    const roles = await this.userRoleService.userRoleRepository.findOne({
+      where: { name: data.roles },
+    });
+    if (roles) {
+      data = { ...data, roles };
+    }
+    await this.userRepository.update(id, data);
+    return await this.findOneById(id);
   }
 }

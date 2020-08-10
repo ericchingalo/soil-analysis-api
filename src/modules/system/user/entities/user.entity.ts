@@ -5,11 +5,13 @@ import {
   ManyToMany,
   JoinTable,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Identifiable } from '../../../../shared/entities/identifiable.entitty';
 import { UserRole } from '../../user-role/entities/user-role.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { ManyToOne } from 'typeorm';
 
 @Entity('users')
 export class User extends Identifiable {
@@ -33,9 +35,13 @@ export class User extends Identifiable {
   })
   token: string;
 
-  @ManyToMany(type => UserRole)
-  @JoinTable({ name: 'roles' })
-  roles: UserRole[];
+  @ManyToOne(
+    type => UserRole,
+    role => role.users,
+
+    { onDelete: 'SET NULL' },
+  )
+  roles: UserRole;
 
   public static getBase64(username: string, password: string) {
     return Buffer.from(username + ':' + password).toString('base64');
