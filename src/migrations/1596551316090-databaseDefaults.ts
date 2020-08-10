@@ -11,15 +11,6 @@ export class databaseDefaults1596551316090 implements MigrationInterface {
     await queryRunner.query(
       `INSERT INTO user_permission(permission) VALUES ('manage users'), ('add soil data'), ('view soil results');`,
     );
-    await queryRunner.query(`
-    INSERT INTO users (username, password, email, token) VALUES ('Admin', '${await bcrypt.hash(
-      process.env.ADMIN_PASSWORD,
-      10,
-    )}', 'echingalo@gmail.com', '${generateBasicAuthanticationString(
-      'admin',
-      'chingalo',
-    )}')
-    `);
 
     const adminRole = await queryRunner.query(
       `SELECT id FROM user_role WHERE role_name = 'admin'`,
@@ -41,17 +32,19 @@ export class databaseDefaults1596551316090 implements MigrationInterface {
       `SELECT id FROM user_permission WHERE permission = 'view soil results'`,
     );
 
-    const adminUser = await queryRunner.query(
-      `SELECT id FROM users WHERE username = 'Admin'`,
-    );
-
     await queryRunner.query(
       `INSERT INTO role_permission VALUES ('${adminRole[0].id}','${permission1[0].id}'), ('${adminRole[0].id}','${permission3[0].id}'), ('${guestRole[0].id}','${permission3[0].id}'), ('${testerRole[0].id}','${permission3[0].id}'), ('${testerRole[0].id}','${permission2[0].id}')`,
     );
 
-    await queryRunner.query(
-      `INSERT INTO roles VALUES ('${adminUser[0].id}', '${adminRole[0].id}')`,
-    );
+    await queryRunner.query(`
+    INSERT INTO users (username, password, email, token) VALUES ('Admin', '${await bcrypt.hash(
+      process.env.ADMIN_PASSWORD,
+      10,
+    )}', 'echingalo@gmail.com', '${generateBasicAuthanticationString(
+      'Admin',
+      process.env.ADMIN_PASSWORD,
+    )}')
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}
