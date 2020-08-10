@@ -21,6 +21,7 @@ export class Result extends SoilAnalysisBaseEntity {
   @ManyToOne(
     type => Device,
     device => device.results,
+    { onDelete: 'CASCADE' },
   )
   device: Device;
 

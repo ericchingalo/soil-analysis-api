@@ -10,12 +10,14 @@ export class ParameterResult {
   @ManyToOne(
     type => Result,
     result => result.parameter,
+    { onDelete: 'CASCADE' },
   )
   result: Result;
 
   @ManyToOne(
     type => Parameter,
     parameter => parameter.result,
+    { onDelete: 'SET NULL' },
   )
   parameter: Parameter;
 

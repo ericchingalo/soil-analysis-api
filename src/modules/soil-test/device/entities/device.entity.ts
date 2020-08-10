@@ -5,7 +5,7 @@ import { Result } from 'src/modules/soil-test/result/entities/result.entity';
 
 @Entity('device')
 export class Device extends Identifiable {
-  @OneToOne(type => User)
+  @OneToOne(type => User, { onDelete: 'SET NULL' })
   @JoinColumn()
   user: User;
 
