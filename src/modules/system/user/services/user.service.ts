@@ -42,8 +42,11 @@ export class UserService extends BaseService<User, UserDTO> {
       }),
     });
 
-    user.save();
-    return _.omit(user, 'password');
+    await user.save();
+    return await this.userRepository.findOne({
+      where: { username: data.username },
+      relations: ['roles'],
+    });
   }
 
   async findOneById(id: string): Promise<any> {
