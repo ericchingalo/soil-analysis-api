@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from '../entities/device.entity';
 import { Repository } from 'typeorm';
 import { BaseService } from '../../../../shared/services/base.service';
 import { DeviceDTO } from '../dtos/device.dto';
 import { UserService } from '../../../system/user/services/user.service';
+import { AuthService } from '../../../system/user/services/auth.service';
 
 @Injectable()
 export class DeviceService extends BaseService<Device, DeviceDTO> {
@@ -12,6 +13,7 @@ export class DeviceService extends BaseService<Device, DeviceDTO> {
   constructor(
     @InjectRepository(Device) repository: Repository<Device>,
     private userService: UserService,
+    private authService: AuthService,
   ) {
     super(repository);
     this.deviceRepository = repository;
@@ -55,5 +57,21 @@ export class DeviceService extends BaseService<Device, DeviceDTO> {
       where: { id },
       relations: ['user'],
     });
+  }
+
+  async login(username: string, password: string) {
+    const user = await this.authService.login(username, password);
+    const device = await this.deviceRepository.findOne({
+      where: { user: user.id },
+    });
+
+    if (!device) {
+      throw new HttpException(
+        'User not assigned a device',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return { ...user, device: device.id };
   }
 }
