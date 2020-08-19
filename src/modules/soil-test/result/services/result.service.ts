@@ -25,11 +25,14 @@ export class ResultService extends BaseService<Result, ResultDTO> {
   }
 
   async create(data: ResultDTO): Promise<any> {
-    const resultObject = await this.resultRepository.save({
+    const resultObject = await this.resultRepository.create({
       device: await this.deviceService.deviceRepository.findOne({
         id: data.device,
       }),
+      created: data.created ? data.created : new Date(),
     });
+
+    await this.resultRepository.save(resultObject);
 
     await Promise.all(
       _.forEach(

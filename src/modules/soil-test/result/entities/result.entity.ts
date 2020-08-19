@@ -33,6 +33,8 @@ export class Result extends SoilAnalysisBaseEntity {
 
   @BeforeInsert()
   insertDate() {
-    this.created = new Date();
+    if (!this.created) {
+      this.created = new Date();
+    }
   }
 }

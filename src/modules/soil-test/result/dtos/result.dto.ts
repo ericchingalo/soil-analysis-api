@@ -1,4 +1,4 @@
-import { IsString, IsArray } from 'class-validator';
+import { IsString, IsArray, IsDate } from 'class-validator';
 import { ParameterResultDTO } from './parameter-result.dto';
 
 export class ResultDTO {
@@ -7,4 +7,6 @@ export class ResultDTO {
 
   @IsArray()
   results: ParameterResultDTO[];
+
+  created?: Date;
 }
