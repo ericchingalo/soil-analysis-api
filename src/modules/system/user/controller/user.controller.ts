@@ -5,6 +5,8 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  UseGuards,
+  Param,
 } from '@nestjs/common';
 import { BaseController } from 'src/shared/controllers/base.controller';
 import { UserDTO } from '../dtos/user.dto';
@@ -13,6 +15,8 @@ import { UserService } from '../services/user.service';
 import { UserLoginDTO } from '../dtos/user-login.dto';
 import { AuthService } from '../services/auth.service';
 import { UpdateUserDTO } from '../dtos/update-user.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { UpdatePasswordDTO } from '../dtos/update-password.dto';
 
 @Controller('users')
 export class UserController extends BaseController<
@@ -42,5 +46,14 @@ export class UserController extends BaseController<
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Post(':id/change-password')
+  @UseGuards(new AuthGuard())
+  async changePassword(
+    @Body() user: UpdatePasswordDTO,
+    @Param('id') id: string,
+  ) {
+    return await this.userService.changePassword({ ...user, id });
   }
 }

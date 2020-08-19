@@ -68,4 +68,17 @@ export class UserService extends BaseService<User, UserDTO> {
     await this.userRepository.update(id, data);
     return await this.findOneById(id);
   }
+
+  async changePassword(updatedUser: QueryDeepPartialEntity<User>) {
+    const user: User = await this.userRepository.findOne({
+      where: { id: updatedUser.id },
+      select: ['id', 'token', 'username'],
+    });
+    const token = generateBasicAuthanticationString(
+      user.username,
+      updatedUser.password,
+    );
+
+    return await this.update(user.id, { ...updatedUser, token });
+  }
 }
