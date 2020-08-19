@@ -9,6 +9,8 @@ import { ResultDTO } from '../dtos/result.dto';
 import { ParameterResultService } from './parameter-result.service';
 import { DeviceService } from '../../device/services/device.service';
 import { ParameterResultDTO } from '../dtos/parameter-result.dto';
+import { resultsSaniziter } from '../helpers/results-sanitizer.helper';
+import { aggregrateDailyRegionResults } from '../helpers/results-aggregator.helper';
 
 @Injectable()
 export class ResultService extends BaseService<Result, ResultDTO> {
@@ -51,5 +53,10 @@ export class ResultService extends BaseService<Result, ResultDTO> {
       where: { id },
       relations: ['device', 'device.user', 'parameter', 'parameter.parameter'],
     });
+  }
+
+  async findAggregated() {
+    const results = await this.findAll();
+    return aggregrateDailyRegionResults(resultsSaniziter(results));
   }
 }
