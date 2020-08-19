@@ -23,7 +23,6 @@ export class ResultController extends BaseController<
   }
 
   @Get('aggregated')
-  @UseGuards(new AuthGuard())
   async findAllAggregated() {
     return await this.resultService.findAggregated();
   }
