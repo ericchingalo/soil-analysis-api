@@ -28,6 +28,11 @@ export class DeviceController extends BaseController<
     super(deviceService);
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.deviceService.findOneById(id);
+  }
+
   @Put(':id')
   @UseGuards(new AuthGuard())
   async put(
